@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Information Management System</title>
+<style>
+ body{font-family:system-ui,sans-serif;margin:0;background:#f4f6fb;color:#222}
+ header{background:#2b4c7e;color:#fff;padding:16px 24px} main{max-width:980px;margin:20px auto;padding:0 16px}
+ .card{background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px #0002}
+ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+ input,button{padding:8px;border:1px solid #bbb;border-radius:6px;font-size:14px}
+ button{background:#2b4c7e;color:#fff;border:0;cursor:pointer} button.del{background:#b33}
+ button.sec{background:#777} table{width:100%;border-collapse:collapse} th,td{padding:8px;text-align:left;border-bottom:1px solid #eee}
+ #msg{padding:8px;border-radius:6px;margin-bottom:12px;display:none} .ok{background:#dff5e1}.err{background:#fde0e0}
+</style></head><body>
+<header><h1>Student Information Management System</h1></header>
+<main>
+ <div id="msg"></div>
+ <div class="card"><h3 id="ftitle">Add student</h3>
+  <form id="f">
+   <input name="rollNo" placeholder="Roll No" required><input name="name" placeholder="Name" required>
+   <input name="email" type="email" placeholder="Email" required><input name="department" placeholder="Department" required>
+   <input name="year" type="number" min="1" max="6" placeholder="Year" required>
+   <button id="save">Add</button><button type="button" class="sec" id="cancel" hidden>Cancel</button>
+  </form></div>
+ <div class="card"><input id="q" placeholder="Search by name, roll no, email, department..." style="width:70%">
+  <button id="sbtn">Search</button> <button class="sec" id="all">Show all</button> <a href="/api/backup">Download backup</a>
+  <table><thead><tr><th>Roll</th><th>Name</th><th>Email</th><th>Dept</th><th>Year</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+ <small id="stats"></small>
+</main>
+<script>
+const $=s=>document.querySelector(s); let editId=null;
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function say(t,ok=true){const m=$('#msg');m.textContent=t;m.className=ok?'ok':'err';m.style.display='block';setTimeout(()=>m.style.display='none',3500)}
+async function api(url,opt){const r=await fetch(url,opt);const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||r.statusText);return d}
+async function load(q=''){
+  const list=await api('/api/students'+(q?'?search='+encodeURIComponent(q):''));
+  $('#rows').innerHTML=list.length?list.map(s=>`<tr><td>${esc(s.rollNo)}</td><td>${esc(s.name)}</td><td>${esc(s.email)}</td><td>${esc(s.department)}</td><td>${s.year}</td>
+   <td><button onclick='edit(${JSON.stringify(s).replace(/'/g,"&#39;")})'>Edit</button> <button class="del" onclick="del('${s.id}')">Delete</button></td></tr>`).join(''):'<tr><td colspan=6>No students found</td></tr>';
+  const st=await api('/api/stats');$('#stats').textContent=`${st.students} students | host ${st.host} | ${st.platform} | ${st.cpus} CPUs`;
+}
+function edit(s){editId=s.id;for(const k of['rollNo','name','email','department','year'])$('#f')[k].value=s[k];$('#ftitle').textContent='Update student';$('#save').textContent='Update';$('#cancel').hidden=false}
+function reset(){editId=null;$('#f').reset();$('#ftitle').textContent='Add student';$('#save').textContent='Add';$('#cancel').hidden=true}
+async function del(id){if(!confirm('Delete this student?'))return;try{await api('/api/students/'+id,{method:'DELETE'});say('Deleted');load()}catch(e){say(e.message,false)}}
+$('#f').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));
+ try{await api(editId?'/api/students/'+editId:'/api/students',{method:editId?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+ say(editId?'Updated':'Added');reset();load()}catch(err){say(err.message,false)}};
+$('#cancel').onclick=reset;$('#sbtn').onclick=()=>load($('#q').value);$('#all').onclick=()=>{$('#q').value='';load()};
+$('#q').onkeydown=e=>e.key==='Enter'&&load($('#q').value);
+load().catch(e=>say(e.message,false));
+</script></body></html>

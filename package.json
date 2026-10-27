@@ -1,0 +1,30 @@
+{
+  "name": "student-management-system",
+  "version": "1.0.0",
+  "description": "Student Information Management System demonstrating core Node.js concepts",
+  "main": "server.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "start:https": "node server.js --https",
+    "dev": "node --watch server.js",
+    "cli": "node cli.js",
+    "repl": "node repl.js",
+    "test": "node test/store.test.js",
+    "debug": "node inspect demos/debug-demo.js",
+    "certs": "sh scripts/gen-certs.sh",
+    "demo:os": "node demos/os-demo.js",
+    "demo:timers": "node demos/timers-demo.js",
+    "demo:crypto": "node demos/dns-crypto-demo.js",
+    "demo:tls": "node demos/tls-demo.js",
+    "demo:process": "node demos/process-demo.js",
+    "demo:child": "node demos/child-demo.js",
+    "demo:buffer": "node demos/buffer-demo.js",
+    "demo:streams": "node demos/streams-demo.js",
+    "demo:decoder": "node demos/decoder-demo.js",
+    "demo:events": "node demos/events-demo.js",
+    "demo:errors": "node demos/errors-demo.js"
+  },
+  "keywords": ["nodejs", "students", "crud"],
+  "license": "MIT"
+}

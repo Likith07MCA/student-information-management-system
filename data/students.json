@@ -1,0 +1,30 @@
+[
+  {
+    "id": "a1b2c3d4",
+    "rollNo": "CS101",
+    "name": "Asha Rao",
+    "email": "asha@example.com",
+    "department": "CSE",
+    "year": 2,
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "e5f6a7b8",
+    "rollNo": "IT202",
+    "name": "Ravi Kumar",
+    "email": "ravi@example.com",
+    "department": "IT",
+    "year": 3,
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "74c2fe50",
+    "rollNo": "042",
+    "name": "LIKITH GOWDA HK",
+    "email": "LIKITHGOWDA479@GMAIL.COM",
+    "department": "mca",
+    "year": 2,
+    "createdAt": "2026-10-27T08:16:49.394Z",
+    "updatedAt": "2026-10-27T08:17:46.425Z"
+  }
+]
